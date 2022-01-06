@@ -1,0 +1,11 @@
+### get me
+GET https://api.telegram.org/bot{{token}}/getMe
+Accept: application/json
+
+### get gile
+GET https://api.telegram.org/bot{{token}}/getFile?file_id=BQACAgIAAxkBAAOCYdcQaeYHp81vET-i9Z3hbsVIhnoAAgEUAAItyrhKi2sZTEjEoiEjBA
+Accept: application/json
+
+### Download file
+GET https://api.telegram.org/file/bot{{token}}/documents/file_0.pdf
+Accept: application/json
