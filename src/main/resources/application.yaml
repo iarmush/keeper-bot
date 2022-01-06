@@ -1,0 +1,16 @@
+quarkus:
+  http:
+    port: 8091
+  native:
+    additional-build-args:
+    - --allow-incomplete-classpath
+    - --initialize-at-run-time=org.apache.http.impl.auth.NTLMEngineImpl
+  rest-client:
+    ru.my.bot.client.TelegramClient:
+      url: https://api.telegram.org
+  log:
+    level: ALL
+
+bot:
+  username: test
+  token: test
