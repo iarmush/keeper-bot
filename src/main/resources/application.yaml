@@ -9,7 +9,11 @@ quarkus:
     ru.my.bot.client.TelegramClient:
       url: https://api.telegram.org
   log:
-    level: ALL
+    level: INFO
+
+  mongodb:
+    connection-string: mongodb://localhost:27018
+    database: fileData
 
 bot:
   username: test
