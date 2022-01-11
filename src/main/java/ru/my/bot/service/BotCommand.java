@@ -3,7 +3,8 @@ package ru.my.bot.service;
 public enum BotCommand {
 
     START("/start"),
-    DOWNLOAD("/download");
+    DOWNLOAD("/download"),
+    CLEAR("/clear");
 
     private final String name;
 

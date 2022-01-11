@@ -9,7 +9,7 @@ quarkus:
     ru.my.bot.client.TelegramClient:
       url: https://api.telegram.org
   log:
-    level: ALL
+    level: INFO
 
 bot:
   username: test

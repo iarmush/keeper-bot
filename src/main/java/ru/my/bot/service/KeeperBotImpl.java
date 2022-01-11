@@ -3,6 +3,8 @@ package ru.my.bot.service;
 import io.quarkus.logging.Log;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.Comparator;
 import javax.inject.Singleton;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
@@ -40,7 +42,7 @@ public class KeeperBotImpl {
 
                     if (message.hasText()) {
                         if (message.getText().equals(BotCommand.START.getName())) {
-                            this.execute(SendMessage.builder().text(
+                            execute(SendMessage.builder().text(
                                 """
                                     Hello! It's KeeperBot.
                                     Send me file, photo, or another media.
@@ -60,6 +62,9 @@ public class KeeperBotImpl {
                             sendMessage.setChatId(String.valueOf(chatId));
 
                             this.execute(sendMessage);
+                        } else if (message.getText().equals(BotCommand.CLEAR.getName())) {
+                            fileDataService.getFileMap().get(chatId).clear();
+                            execute(SendMessage.builder().text("KeeperBot is ready for new media").chatId(String.valueOf(chatId)).build());
                         }
                     } else if (message.getDocument() != null) {
                         String fileName = message.getDocument().getFileName();
@@ -68,15 +73,14 @@ public class KeeperBotImpl {
 
                         fileDataService.storeFileDataToMap(chatId, new FileData(fileName, filePath));
                     } else if (message.getPhoto() != null) {
-                        for (PhotoSize photo : message.getPhoto()) {
-                            String fileId = photo.getFileId();
-                            String filePath = execute(new GetFile(fileId)).getFilePath();
+                        PhotoSize photo = Collections.max(message.getPhoto(), Comparator.comparing(PhotoSize::getFileSize));
+                        String fileId = photo.getFileId();
+                        String filePath = execute(new GetFile(fileId)).getFilePath();
 
-                            fileDataService.storeFileDataToMap(chatId,
-                                new FileData("photo_" +
-                                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")) + ".jpeg",
-                                    filePath));
-                        }
+                        fileDataService.storeFileDataToMap(chatId,
+                            new FileData("photo_" +
+                                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")) + ".jpeg",
+                                filePath));
                     }
                 } catch (
                     TelegramApiException e) {
