@@ -20,7 +20,7 @@ public class FileDataService {
         this.fileDataRepository = fileDataRepository;
     }
 
-    void saveFileData(String fileName, String filePath, Long chatId, byte[] bytes) {
+    public void saveFileData(String fileName, String filePath, Long chatId, byte[] bytes) {
         FileData fileData = new FileData();
         fileData.setFileName(fileName);
         fileData.setFilePath(filePath);
@@ -30,7 +30,7 @@ public class FileDataService {
         fileDataRepository.persist(fileData);
     }
 
-    void deleteFileData(Long chatId) {
+    public void deleteFileData(Long chatId) {
         fileDataRepository.deleteByChatId(chatId);
     }
 

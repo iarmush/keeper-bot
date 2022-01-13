@@ -78,7 +78,7 @@ public class KeeperBotImpl {
                 } else if (message.getText().equals(BotCommand.CLEAR.getName())) {
                     fileDataService.deleteFileData(chatId);
                     execute(SendMessage.builder().text("KeeperBot is ready for new media").chatId(String.valueOf(chatId)).build());
-                }  else {
+                } else {
                     Log.error("Error while handling text in chatId: " + chatId);
                     throw new RuntimeException("Error while handling text in chatId: " + chatId);
                 }
