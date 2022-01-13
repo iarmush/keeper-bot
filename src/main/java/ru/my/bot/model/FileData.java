@@ -3,12 +3,14 @@ package ru.my.bot.model;
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
 @MongoEntity(collection = "fileData")
 public class FileData extends PanacheMongoEntity {
 
     @BsonProperty("chatId")
+    @NotNull
     private Long chatId;
 
     @NotEmpty

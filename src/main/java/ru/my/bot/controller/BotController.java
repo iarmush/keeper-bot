@@ -11,7 +11,7 @@ import ru.my.bot.service.FileDataService;
 @Path("/api/keeper-bot")
 public class BotController {
 
-    private FileDataService fileDataService;
+    private final FileDataService fileDataService;
 
     public BotController(FileDataService fileDataService) {
         this.fileDataService = fileDataService;

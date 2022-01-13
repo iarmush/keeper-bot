@@ -15,13 +15,7 @@ public class Main {
         Quarkus.run(MyApp.class, args);
     }
 
-    public static class MyApp implements QuarkusApplication {
-
-        private TelegramLongPollingBot telegramLongPollingBot;
-
-        public MyApp(TelegramLongPollingBot telegramLongPollingBot) {
-            this.telegramLongPollingBot = telegramLongPollingBot;
-        }
+    public record MyApp(TelegramLongPollingBot telegramLongPollingBot) implements QuarkusApplication {
 
         @Override
         public int run(String... args) {

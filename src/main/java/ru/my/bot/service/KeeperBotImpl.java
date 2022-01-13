@@ -16,15 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.my.bot.config.BotConfig;
 
-public class KeeperBotImpl {
-
-    private BotConfig botConfig;
-    private FileDataService fileDataService;
-
-    public KeeperBotImpl(BotConfig botConfig, FileDataService fileDataService) {
-        this.botConfig = botConfig;
-        this.fileDataService = fileDataService;
-    }
+public record KeeperBotImpl(BotConfig botConfig, FileDataService fileDataService) {
 
     @Singleton
     public TelegramLongPollingBot telegramLongPollingBot() {
@@ -37,7 +29,7 @@ public class KeeperBotImpl {
             @Override
             public void onUpdateReceived(Update update) {
                 try {
-                    Message message = update.getMessage();
+                    var message = update.getMessage();
                     if (message.hasText()) {
                         handleText(message);
                     } else if (message.hasDocument() || message.hasPhoto() || message.hasVideo()) {
@@ -97,7 +89,7 @@ public class KeeperBotImpl {
                     fileId = message.getDocument().getFileId();
                     filePath = execute(new GetFile(fileId)).getFilePath();
                 } else if (message.getPhoto() != null) {
-                    fileName = "photo_" + LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE) + ".jpeg";
+                    fileName = "photo_" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + ".jpeg";
                     fileId = Collections.max(message.getPhoto(), Comparator.comparing(PhotoSize::getFileSize)).getFileId();
                     filePath = execute(new GetFile(fileId)).getFilePath();
                 } else if (message.getVideo() != null) {
@@ -109,7 +101,7 @@ public class KeeperBotImpl {
                     throw new RuntimeException("Error while handling media in chatId: " + chatId);
                 }
 
-                byte[] bytes = downloadFileAsStream(filePath).readAllBytes();
+                var bytes = downloadFileAsStream(filePath).readAllBytes();
                 fileDataService.saveFileData(fileName, filePath, chatId, bytes);
             }
         };

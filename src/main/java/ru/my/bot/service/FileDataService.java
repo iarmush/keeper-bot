@@ -14,14 +14,14 @@ import ru.my.bot.repository.FileDataRepository;
 @ApplicationScoped
 public class FileDataService {
 
-    private FileDataRepository fileDataRepository;
+    private final FileDataRepository fileDataRepository;
 
     public FileDataService(FileDataRepository fileDataRepository) {
         this.fileDataRepository = fileDataRepository;
     }
 
     public void saveFileData(String fileName, String filePath, Long chatId, byte[] bytes) {
-        FileData fileData = new FileData();
+        var fileData = new FileData();
         fileData.setFileName(fileName);
         fileData.setFilePath(filePath);
         fileData.setChatId(chatId);
@@ -35,34 +35,26 @@ public class FileDataService {
     }
 
     public Response downloadFilesByChatId(Long chatId) {
-        List<FileData> fileDataList = fileDataRepository.findByChatId(chatId);
+        var fileDataList = fileDataRepository.findByChatId(chatId);
         checkFileDataIsNullOrEmpty(chatId, fileDataList);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ZipOutputStream zos = new ZipOutputStream(baos);
-        try {
-            fileDataList.forEach(fileData -> {
-                ZipEntry entry = new ZipEntry(fileData.getFileName());
-                entry.setSize(fileData.getBytes().length);
-                try {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+                for (FileData fileData : fileDataList) {
+                    ZipEntry entry = new ZipEntry(fileData.getFileName());
+                    entry.setSize(fileData.getBytes().length);
                     zos.putNextEntry(entry);
                     zos.write(fileData.getBytes());
                     zos.closeEntry();
-                } catch (IOException e) {
-                    Log.error("Error while close zos entry", e);
-                    throw new RuntimeException(e);
                 }
-            });
-
-            zos.close();
+            }
+            return Response.ok(baos.toByteArray())
+                .header("Content-Disposition", "attachment; filename=keeper_bot.zip")
+                .build();
         } catch (IOException e) {
-            Log.error("Error while close zos", e);
+            Log.error("Error while close baos", e);
             throw new RuntimeException(e);
         }
-
-        return Response.ok(baos.toByteArray())
-            .header("Content-Disposition", "attachment; filename=keeper_bot.zip")
-            .build();
     }
 
     private void checkFileDataIsNullOrEmpty(Long chatId, List<FileData> fileDataList) {
