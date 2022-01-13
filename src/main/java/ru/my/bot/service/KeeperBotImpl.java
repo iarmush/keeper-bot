@@ -43,7 +43,7 @@ public class KeeperBotImpl {
                     } else if (message.hasDocument() || message.hasPhoto() || message.hasVideo()) {
                         handleMedia(message);
                     } else {
-                        execute(SendMessage.builder().text("Please send media").build());
+                        execute(SendMessage.builder().text("Please send medias").build());
                     }
                 } catch (TelegramApiException | IOException e) {
                     Log.error("Error while receive update");
@@ -62,22 +62,23 @@ public class KeeperBotImpl {
 
                 if (message.getText().equals(BotCommand.START.getName())) {
                     execute(SendMessage.builder().text("""
-                               Hello! It's KeeperBot.
-                               Send me file, photo, or another media.
-                               Then text me /download for external link for downloading.
+                            Hello! It's KeeperBot.
+                            Send me files, photos or videos.
+                            After use command /link for getting external link for downloading.
                             """)
                         .chatId(String.valueOf(chatId))
                         .build());
-                } else if (message.getText().equals(BotCommand.DOWNLOAD.getName())) {
-                    var link = "http://localhost:3006/?chat_id=" + chatId;
+                } else if (message.getText().equals(BotCommand.LINK.getName())) {
                     execute(SendMessage.builder().text("""
-                            Copy and paste this link to your browser:
-                            """ + link)
+                            Use this link for downloading archive:
+                            http://localhost:3006/?chat_id=%s
+                            """.formatted(chatId))
                         .chatId(String.valueOf(chatId))
                         .build());
-                } else if (message.getText().equals(BotCommand.CLEAR.getName())) {
+                } else if (message.getText().equals(BotCommand.FINISH.getName())) {
                     fileDataService.deleteFileData(chatId);
-                    execute(SendMessage.builder().text("KeeperBot is ready for new media").chatId(String.valueOf(chatId)).build());
+                    execute(SendMessage.builder().text("KeeperBot is ready for new medias")
+                        .chatId(String.valueOf(chatId)).build());
                 } else {
                     Log.error("Error while handling text in chatId: " + chatId);
                     throw new RuntimeException("Error while handling text in chatId: " + chatId);

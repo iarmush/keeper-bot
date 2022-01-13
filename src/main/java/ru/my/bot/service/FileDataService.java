@@ -67,7 +67,7 @@ public class FileDataService {
 
     private void checkFileDataIsNullOrEmpty(Long chatId, List<FileData> fileDataList) {
         if (fileDataList == null || fileDataList.isEmpty()) {
-            Log.error("FileData is empty, please send media: " + chatId);
+            Log.error("FileData is empty, please send medias: " + chatId);
             throw new RuntimeException("FileData is empty, please send media");
         }
     }
