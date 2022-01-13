@@ -3,14 +3,10 @@ quarkus:
     port: 8091
   native:
     additional-build-args:
-    - --allow-incomplete-classpath
-    - --initialize-at-run-time=org.apache.http.impl.auth.NTLMEngineImpl
-  rest-client:
-    ru.my.bot.client.TelegramClient:
-      url: https://api.telegram.org
+      - --allow-incomplete-classpath
+      - --initialize-at-run-time=org.apache.http.impl.auth.NTLMEngineImpl
   log:
     level: INFO
-
   mongodb:
     connection-string: mongodb://localhost:27018
     database: fileData
