@@ -6,7 +6,7 @@ import org.jboss.logging.Logger;
 
 public record MinioClientFactory(MinioConfig minIOConfig) {
 
-    private static final Logger LOG = Logger.getLogger(MinioClientFactory.class);
+    private static final Logger LOGGER = Logger.getLogger(MinioClientFactory.class);
 
     @Singleton
     public MinioClient minioClient() {
@@ -21,7 +21,7 @@ public record MinioClientFactory(MinioConfig minIOConfig) {
                     minIOConfig.secretKey())
                 .build();
         } catch (Exception e) {
-            LOG.errorv(e, "Error while initializing miniClient");
+            LOGGER.errorf(e, "Error while initializing miniClient");
             throw new RuntimeException(e);
         }
     }

@@ -22,17 +22,16 @@ import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.core.Response;
 import org.jboss.logging.Logger;
 
 @ApplicationScoped
-public class MinioStorageService {
+public class MinioService {
 
-    private static final Logger LOG = Logger.getLogger(MinioStorageService.class);
+    private static final Logger LOGGER = Logger.getLogger(MinioService.class);
 
     private final MinioClient minioClient;
 
-    public MinioStorageService(MinioClient minioClient) {
+    public MinioService(MinioClient minioClient) {
         this.minioClient = minioClient;
     }
 
@@ -47,12 +46,12 @@ public class MinioStorageService {
 
             minioClient.putObject(putObjectArgs);
         } catch (Exception e) {
-            LOG.errorv(e, "Error while uploading file: {} to bucket: {}", fileName, bucketName);
+            LOGGER.errorf(e, "Error while uploading file: :s to bucket: :s", fileName, bucketName);
             throw new RuntimeException(e);
         }
     }
 
-    public Response downloadZip(String bucketName) {
+    public byte[] downloadZip(String bucketName) {
         List<String> objectNameList = getObjectNamesInBucket(bucketName);
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             try (ZipOutputStream zos = new ZipOutputStream(baos)) {
@@ -66,11 +65,9 @@ public class MinioStorageService {
                     zos.closeEntry();
                 }
             }
-            return Response.ok(baos.toByteArray())
-                .header("Content-Disposition", "attachment; filename=keeper_bot.zip")
-                .build();
+            return baos.toByteArray();
         } catch (Exception e) {
-            LOG.errorv(e, "Error while writing to zip file in bucket: {}", bucketName);
+            LOGGER.errorf(e, "Error while writing to zip file in bucket: :s", bucketName);
             throw new RuntimeException(e);
         }
     }
@@ -95,7 +92,7 @@ public class MinioStorageService {
                     "Error in deleting object " + error.objectName() + "; " + error.message());
             }
         } catch (Exception e) {
-            LOG.errorv(e, "Error while removing bucket: {}", bucketName);
+            LOGGER.errorf(e, "Error while removing bucket: :s", bucketName);
             throw new RuntimeException(e);
         }
     }
@@ -105,11 +102,11 @@ public class MinioStorageService {
             if (isBucketExists(bucketName)) {
                 minioClient.removeBucket(RemoveBucketArgs.builder().bucket(bucketName).build());
             } else {
-                LOG.errorv("Attempt to remove not existed bucket: {}", bucketName);
+                LOGGER.infof("Attempt to remove not existed bucket: %s", bucketName);
                 throw new RuntimeException("Bucket doesn't exist");
             }
         } catch (Exception e) {
-            LOG.errorv(e, "Error while removing bucket: {}", bucketName);
+            LOGGER.errorf(e, "Error while removing bucket: :s", bucketName);
             throw new RuntimeException(e);
         }
     }
@@ -121,7 +118,7 @@ public class MinioStorageService {
                     .bucket(bucketName)
                     .object(objectName).build()).readAllBytes();
         } catch (Exception e) {
-            LOG.errorv(e, "Error while getting object: {}  from bucket: {}", objectName, bucketName);
+            LOGGER.errorf(e, "Error while getting object: :s  from bucket: :s", objectName, bucketName);
             throw new RuntimeException(e);
         }
     }
@@ -134,7 +131,7 @@ public class MinioStorageService {
                 try {
                     return itemResult.get();
                 } catch (Exception e) {
-                    LOG.errorv(e, "Error while getting result: {} for bucket: {}", itemResult, bucketName);
+                    LOGGER.errorf(e, "Error while getting result: :s for bucket: :s", itemResult, bucketName);
                     throw new RuntimeException(e);
                 }
             })
@@ -156,7 +153,7 @@ public class MinioStorageService {
                     .build());
             }
         } catch (Exception e) {
-            LOG.errorv(e, "Error while creating bucket with name: {}", bucketName);
+            LOGGER.errorf(e, "Error while creating bucket with name: :s", bucketName);
             throw new RuntimeException(e);
         }
     }
@@ -167,7 +164,7 @@ public class MinioStorageService {
                 bucket(bucketName)
                 .build());
         } catch (Exception e) {
-            LOG.errorv(e, "Error while checking is bucket exists: {}", bucketName);
+            LOGGER.errorf(e, "Error while checking is bucket exists: :s", bucketName);
             throw new RuntimeException(e);
         }
     }

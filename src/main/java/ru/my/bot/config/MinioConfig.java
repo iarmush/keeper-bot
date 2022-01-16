@@ -14,5 +14,4 @@ public interface MinioConfig {
     String accessKey();
 
     String secretKey();
-
 }

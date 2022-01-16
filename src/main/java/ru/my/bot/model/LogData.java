@@ -2,27 +2,20 @@ package ru.my.bot.model;
 
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
-import javax.validation.constraints.NotEmpty;
+import java.time.LocalDateTime;
 import javax.validation.constraints.NotNull;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
-@MongoEntity(collection = "fileData")
+@MongoEntity(collection = "logData")
 public class LogData extends PanacheMongoEntity {
 
-    @BsonProperty("chatId")
     @NotNull
+    @BsonProperty("chatId")
     private Long chatId;
 
-    @NotEmpty
-    @BsonProperty("fileName")
-    private String fileName;
-
-    @NotEmpty
-    @BsonProperty("filePath")
-    private String filePath;
-
-    @BsonProperty("bytes")
-    private byte[] bytes;
+    @NotNull
+    @BsonProperty("downloadDate")
+    public LocalDateTime downloadDate;
 
     public Long getChatId() {
         return chatId;
@@ -32,27 +25,11 @@ public class LogData extends PanacheMongoEntity {
         this.chatId = chatId;
     }
 
-    public String getFileName() {
-        return fileName;
+    public LocalDateTime getDownloadDate() {
+        return downloadDate;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public byte[] getBytes() {
-        return bytes;
-    }
-
-    public void setBytes(byte[] bytes) {
-        this.bytes = bytes;
+    public void setDownloadDate(LocalDateTime downloadDate) {
+        this.downloadDate = downloadDate;
     }
 }

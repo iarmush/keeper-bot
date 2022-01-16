@@ -9,7 +9,14 @@ quarkus:
     level: INFO
   mongodb:
     connection-string: mongodb://localhost:27018
-    database: fileData
+    database: logData
+
+minio:
+  use-ssl: false
+  host: 127.0.0.1
+  port: 9000
+  access-key: testtest
+  secret-key: testtest
 
 bot:
   username: test

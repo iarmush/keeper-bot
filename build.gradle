@@ -15,16 +15,16 @@ dependencies {
     implementation 'io.quarkus:quarkus-mongodb-panache'
     implementation 'io.quarkus:quarkus-config-yaml'
     implementation 'io.quarkus:quarkus-resteasy-jackson'
+//    implementation 'org.jboss.resteasy:resteasy-jackson2-provider'
     implementation 'io.quarkus:quarkus-resteasy'
     implementation 'io.quarkus:quarkus-rest-client'
     implementation 'io.quarkus:quarkus-rest-client-jackson'
-    implementation group: 'org.jboss.resteasy', name: 'resteasy-jackson2-provider', version: '5.0.1.Final'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
 
-    implementation 'org.telegram:telegrambots:5.6.0'
-    implementation 'io.minio:minio:8.3.5'
+    implementation 'org.telegram:telegrambots:5.7.1'
+    implementation 'io.minio:minio:8.3.6'
 }
 
 group 'telegram-bot'
