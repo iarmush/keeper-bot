@@ -3,12 +3,12 @@ package ru.my.bot.repository;
 import io.quarkus.mongodb.panache.PanacheMongoRepository;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
-import ru.my.bot.model.FileData;
+import ru.my.bot.model.LogData;
 
 @ApplicationScoped
-public class FileDataRepository implements PanacheMongoRepository<FileData> {
+public class LogDataRepository implements PanacheMongoRepository<LogData> {
 
-    public List<FileData> findByChatId(Long chatId) {
+    public List<LogData> findByChatId(Long chatId) {
         return list("chatId", chatId);
     }
 

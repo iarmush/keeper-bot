@@ -6,21 +6,21 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import ru.my.bot.service.FileDataService;
+import ru.my.bot.service.MinioStorageService;
 
 @Path("/api/keeper-bot")
 public class BotController {
 
-    private final FileDataService fileDataService;
+    private final MinioStorageService minIOStorageService;
 
-    public BotController(FileDataService fileDataService) {
-        this.fileDataService = fileDataService;
+    public BotController(MinioStorageService minIOStorageService) {
+        this.minIOStorageService = minIOStorageService;
     }
 
     @GET
     @Path("/download")
     @Produces("application/zip")
-    public Response download(@NotNull @QueryParam("chat_id") Long chatId) {
-        return fileDataService.downloadFilesByChatId(chatId);
+    public Response downloadZip(@NotNull @QueryParam("chat_id") Long chatId) {
+        return minIOStorageService.downloadZip(String.valueOf(chatId));
     }
 }

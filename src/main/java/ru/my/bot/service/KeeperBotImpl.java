@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Comparator;
 import javax.inject.Singleton;
+import org.jboss.logging.Logger;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -16,7 +17,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.my.bot.config.BotConfig;
 
-public record KeeperBotImpl(BotConfig botConfig, FileDataService fileDataService) {
+public record KeeperBotImpl(BotConfig botConfig, LogDataService logDataService, MinioStorageService minIOStorageService) {
+
+    private static final Logger LOG = Logger.getLogger(MinioStorageService.class);
 
     @Singleton
     public TelegramLongPollingBot telegramLongPollingBot() {
@@ -38,7 +41,7 @@ public record KeeperBotImpl(BotConfig botConfig, FileDataService fileDataService
                         execute(SendMessage.builder().text("Please send medias").build());
                     }
                 } catch (TelegramApiException | IOException e) {
-                    Log.error("Error while receive update");
+                    LOG.errorv(e, "Error while receive update");
                     throw new RuntimeException(e);
                 }
             }
@@ -50,7 +53,7 @@ public record KeeperBotImpl(BotConfig botConfig, FileDataService fileDataService
 
             private void handleText(Message message) throws TelegramApiException {
                 var chatId = message.getChatId();
-                Log.info("Handled text in chatId: " + chatId);
+                LOG.errorv("Handled text in chatId: {}", chatId);
 
                 if (message.getText().equals(BotCommand.START.getName())) {
                     execute(SendMessage.builder().text("""
@@ -68,11 +71,11 @@ public record KeeperBotImpl(BotConfig botConfig, FileDataService fileDataService
                         .chatId(String.valueOf(chatId))
                         .build());
                 } else if (message.getText().equals(BotCommand.FINISH.getName())) {
-                    fileDataService.deleteFileData(chatId);
+                    minIOStorageService.deleteFilesAndBucket(String.valueOf(chatId));
                     execute(SendMessage.builder().text("KeeperBot is ready for new medias")
                         .chatId(String.valueOf(chatId)).build());
                 } else {
-                    Log.error("Error while handling text in chatId: " + chatId);
+                    LOG.errorv("Error while handling text in chatId: {}", chatId);
                     throw new RuntimeException("Error while handling text in chatId: " + chatId);
                 }
             }
@@ -102,7 +105,7 @@ public record KeeperBotImpl(BotConfig botConfig, FileDataService fileDataService
                 }
 
                 var bytes = downloadFileAsStream(filePath).readAllBytes();
-                fileDataService.saveFileData(fileName, filePath, chatId, bytes);
+                minIOStorageService.uploadFile(String.valueOf(chatId), fileName, bytes);
             }
         };
     }

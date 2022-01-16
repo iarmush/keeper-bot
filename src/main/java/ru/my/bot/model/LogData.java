@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
 @MongoEntity(collection = "fileData")
-public class FileData extends PanacheMongoEntity {
+public class LogData extends PanacheMongoEntity {
 
     @BsonProperty("chatId")
     @NotNull
