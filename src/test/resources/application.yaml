@@ -1,0 +1,10 @@
+quarkus:
+  http:
+    test-port: 8083
+  native:
+    additional-build-args:
+      - --allow-incomplete-classpath
+      - --initialize-at-run-time=org.apache.http.impl.auth.NTLMEngineImpl
+bot:
+  username: test
+  token: test
